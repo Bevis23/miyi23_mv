@@ -1,6 +1,6 @@
 [[redirects]]
   from = "/api/*"
-  to = "http://baobab.kaiyanapp.com/api/:splat"
+  to = "https://api.ffzyapi.com/:splat"
   status = 200
   force = true
 
@@ -9,3 +9,8 @@
   to = ":splat"
   status = 200
   force = true
+
+[[headers]]
+  for = "/*"
+    [headers.values]
+    Access-Control-Allow-Origin = "*"

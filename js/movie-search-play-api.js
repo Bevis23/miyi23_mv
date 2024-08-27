@@ -28,9 +28,9 @@ export async function handleMovieSearch(searchSection) {
 
 async function searchMovies(searchTerm) {
     try {
-        const response = await fetch(`${API_URL}?ac=detail&wd=${encodeURIComponent(searchTerm)}`);
+        const response = await fetch(`/api/api.php/provide/vod/?ac=detail&wd=${encodeURIComponent(searchTerm)}`);
         const data = await response.json();
-        console.log('API Response:', data); // 日志输出API响应
+        console.log('API Response:', data);
         return data.list || [];
     } catch (error) {
         console.error('Error fetching movies:', error);
@@ -88,6 +88,7 @@ function showMovieDetails(movie) {
     document.getElementById('mainContent').innerHTML = '';
     document.getElementById('mainContent').appendChild(detailsElement);
 }
+
 function playVideo(url) {
     console.log('Attempting to play URL:', url);
 
