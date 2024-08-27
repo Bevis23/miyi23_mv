@@ -2,7 +2,7 @@
 
 import { handleMovieSearch } from './movie-search-play-api.js';
 
-const HOT_VIDEOS_API = '/api/v4/discovery/hot';
+const HOT_VIDEOS_API = 'http://baobab.kaiyanapp.com/api/v4/discovery/hot';
 
 let currentVideoList = [];
 let currentVideoIndex = 0;
