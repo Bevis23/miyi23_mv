@@ -15,7 +15,8 @@
 
     <nav>
         <button id="hotVideosBtn">全球热门视频</button>
-        <button id="movieSearchBtn">vip影音搜索</button>
+        <button id="movieSearchBtn">vip影视搜索</button>
+        <button id="musicBtn">miyi's音乐站</button>
     </nav>
 
     <main id="mainContent">
@@ -31,15 +32,28 @@
             <button id="searchButton">搜索</button>
             <div id="resultsContainer" class="movie-results"></div>
         </section>
+        <section id="musicSection" style="display: none;">
+            <iframe src="https://song.miyi23.top/" width="100%" height="500px" frameborder="0"></iframe>
+        </section>
     </main>
 
     <footer>
         <p>© 本站所有内容均来自互联网，本站不会保存、复制或传播任何视频文件，也不对本站上的任何内容负法律责任。
-        
-        如果本站部分内容侵犯您的版权请告知，在必要证明文件下我们第一时间撤除，发布的内容仅做宽带测试使用，请在下载后24小时内删除</p>
+            注：此站为个人闲暇所做，太多缺陷，献丑了
+        </p>
     </footer>
 
     <script type="module" src="js/app.js"></script>
+    <script>
+        document.getElementById('musicBtn').addEventListener('click', function () {
+            // 隐藏其他 section
+            document.getElementById('videoPlayer').style.display = 'none';
+            document.getElementById('searchSection').style.display = 'none';
+
+            // 显示音乐站 section
+            document.getElementById('musicSection').style.display = 'block';
+        });
+    </script>
 </body>
 
 </html>

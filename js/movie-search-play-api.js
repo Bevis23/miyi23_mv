@@ -89,7 +89,7 @@ function showMovieDetails(movie) {
     document.getElementById('mainContent').appendChild(detailsElement);
 }
 function playVideo(url) {
-    console.log('Attempting to play URL:', url);
+    console.log('Attempting to play URL:', url); // 日志输出尝试播放的URL
 
     let videoPlayer = document.getElementById('videoPlayer');
     if (!videoPlayer) {
@@ -99,17 +99,36 @@ function playVideo(url) {
     }
     videoPlayer.style.display = 'block';
 
-    // 使用 Netlify 代理
-    const proxyUrl = `/proxy/${encodeURIComponent(url)}`;
+    let mainPlayer = document.getElementById('mainPlayer');
+    if (!mainPlayer) {
+        mainPlayer = document.createElement('video');
+        mainPlayer.id = 'mainPlayer';
+        mainPlayer.controls = true;
+        mainPlayer.style.width = '100%';
+        videoPlayer.appendChild(mainPlayer);
+    }
 
-    const iframe = document.createElement('iframe');
-    iframe.src = proxyUrl;
-    iframe.width = '100%';
-    iframe.height = '400px';
-    iframe.allowFullscreen = true;
+    // 检查URL是否是有效的
+    if (!url || typeof url !== 'string') {
+        console.error('Invalid video URL:', url);
+        return;
+    }
 
-    videoPlayer.innerHTML = '';
-    videoPlayer.appendChild(iframe);
+    // 尝试直接播放
+    mainPlayer.src = url;
+    mainPlayer.play().catch(e => {
+        console.error('Error playing video:', e);
+
+        // 如果直接播放失败，尝试使用 iframe
+        const iframe = document.createElement('iframe');
+        iframe.src = url;
+        iframe.width = '100%';
+        iframe.height = '400px';
+        iframe.allowFullscreen = true;
+
+        videoPlayer.innerHTML = '';
+        videoPlayer.appendChild(iframe);
+    });
 }
 
 // 创建视频播放器
