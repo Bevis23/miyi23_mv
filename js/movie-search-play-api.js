@@ -89,23 +89,14 @@ function showMovieDetails(movie) {
     document.getElementById('mainContent').appendChild(detailsElement);
 }
 function playVideo(url) {
-    console.log('Attempting to play URL:', url); // 日志输出尝试播放的URL
+    console.log('Attempting to play URL:', url);
 
-    let videoPlayer = document.getElementById('videoPlayer');
-    if (!videoPlayer) {
-        videoPlayer = document.createElement('div');
-        videoPlayer.id = 'videoPlayer';
-        document.getElementById('mainContent').appendChild(videoPlayer);
-    }
-    videoPlayer.style.display = 'block';
+    const videoPlayer = document.getElementById('videoPlayer');
+    const iframe = document.getElementById('videoIframe');
 
-    let mainPlayer = document.getElementById('mainPlayer');
-    if (!mainPlayer) {
-        mainPlayer = document.createElement('video');
-        mainPlayer.id = 'mainPlayer';
-        mainPlayer.controls = true;
-        mainPlayer.style.width = '100%';
-        videoPlayer.appendChild(mainPlayer);
+    if (!videoPlayer || !iframe) {
+        console.error('Video player elements not found');
+        return;
     }
 
     // 检查URL是否是有效的
@@ -114,30 +105,42 @@ function playVideo(url) {
         return;
     }
 
-    // 尝试直接播放
-    mainPlayer.src = url;
-    mainPlayer.play().catch(e => {
-        console.error('Error playing video:', e);
+    // 尝试将 HTTP 链接转换为 HTTPS
+    url = url.replace('http://', 'https://');
 
-        // 如果直接播放失败，尝试使用 iframe
-        const iframe = document.createElement('iframe');
-        iframe.src = url;
-        iframe.width = '100%';
-        iframe.height = '400px';
-        iframe.allowFullscreen = true;
+    // 使用代理服务器处理请求
+    const proxyUrl = `/video-proxy/${encodeURIComponent(url)}`;
 
-        videoPlayer.innerHTML = '';
-        videoPlayer.appendChild(iframe);
-    });
+    // 更新 iframe 的 src
+    iframe.src = proxyUrl;
+
+    // 显示视频播放器
+    videoPlayer.style.display = 'block';
 }
 
-// 创建视频播放器
+// 创建视频播放器容器
 function createVideoPlayer() {
     const videoPlayer = document.createElement('div');
     videoPlayer.id = 'videoPlayer';
     videoPlayer.style.display = 'none';
 
-    document.getElementById('mainContent').appendChild(videoPlayer);
+    // 创建一个 iframe 元素
+    const iframe = document.createElement('iframe');
+    iframe.id = 'videoIframe';
+    iframe.width = '100%';
+    iframe.height = '400px';
+    iframe.allowFullscreen = true;
+
+    // 将 iframe 添加到 videoPlayer 容器中
+    videoPlayer.appendChild(iframe);
+
+    // 将整个 videoPlayer 容器添加到 mainContent
+    const mainContent = document.getElementById('mainContent');
+    if (mainContent) {
+        mainContent.appendChild(videoPlayer);
+    } else {
+        console.error('mainContent element not found');
+    }
 }
 
 // 在模块初始化时创建视频播放器
