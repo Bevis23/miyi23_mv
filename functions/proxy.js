@@ -11,9 +11,9 @@ exports.handler = async function (event) {
     }
 
     try {
-        // Decode the URL before passing it to axios
+        // 解码 URL 以确保正确传递
         const decodedUrl = decodeURIComponent(url);
-        console.log('Proxying request to:', decodedUrl); // 日志输出解码后的URL
+        console.log('Decoded URL:', decodedUrl);
 
         const response = await axios.get(decodedUrl, {
             headers: {
@@ -21,7 +21,7 @@ exports.handler = async function (event) {
             }
         });
 
-        console.log('Received response:', response.data); // 日志输出响应内容
+        console.log('API Response:', response.data);
 
         return {
             statusCode: 200,
