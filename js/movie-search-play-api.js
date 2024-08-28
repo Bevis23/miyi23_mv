@@ -1,6 +1,4 @@
-// movie-search-play-api.js
-
-const API_URL = '/.netlify/functions/proxy?url=https://api.ffzyapi.com/api.php/provide/vod/';
+const API_URL = '/.netlify/functions/proxy?url=https://api.ffzyapi.com/api.php/provide/vod/?ac=detail';
 
 export async function handleMovieSearch(searchSection) {
     const searchInput = document.createElement('input');
@@ -28,9 +26,10 @@ export async function handleMovieSearch(searchSection) {
 
 async function searchMovies(searchTerm) {
     try {
-        const response = await fetch(`${API_URL}?ac=detail&wd=${encodeURIComponent(searchTerm)}`);
+        // 确保查询参数被正确编码并传递
+        const response = await fetch(`${API_URL}&wd=${encodeURIComponent(searchTerm)}`);
         const data = await response.json();
-        console.log('API Response:', data); // 日志输出API响应
+        console.log('API Response:', data);
         return data.list || [];
     } catch (error) {
         console.error('Error fetching movies:', error);
@@ -88,6 +87,7 @@ function showMovieDetails(movie) {
     document.getElementById('mainContent').innerHTML = '';
     document.getElementById('mainContent').appendChild(detailsElement);
 }
+
 function playVideo(url) {
     console.log('Attempting to play URL:', url); // 日志输出尝试播放的URL
 
@@ -136,6 +136,9 @@ function createVideoPlayer() {
     const videoPlayer = document.createElement('div');
     videoPlayer.id = 'videoPlayer';
     videoPlayer.style.display = 'none';
+    videoPlayer.style.width = '100%';
+    videoPlayer.style.maxWidth = '800px';
+    videoPlayer.style.margin = '0 auto';
 
     document.getElementById('mainContent').appendChild(videoPlayer);
 }
