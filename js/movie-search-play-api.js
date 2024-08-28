@@ -1,6 +1,6 @@
 // movie-search-play-api.js
 
-const API_URL = 'https://video.miyi23.top/.netlify/functions/proxy?url=https://api.ffzyapi.com/api.php/provide/vod/';
+const API_URL = '/.netlify/functions/proxy?url=https://api.ffzyapi.com/api.php/provide/vod/';
 
 export async function handleMovieSearch(searchSection) {
     const searchInput = document.createElement('input');

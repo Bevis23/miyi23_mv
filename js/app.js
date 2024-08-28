@@ -1,8 +1,6 @@
-// js/app.js
-
 import { handleMovieSearch } from './movie-search-play-api.js';
 
-const HOT_VIDEOS_API = 'https://video.miyi23.top/.netlify/functions/proxy?url=https://baobab.kaiyanapp.com/api/v4/discovery/hot';
+const HOT_VIDEOS_API = '/.netlify/functions/proxy?url=https://baobab.kaiyanapp.com/api/v4/discovery/hot';
 
 let currentVideoList = [];
 let currentVideoIndex = 0;
@@ -14,28 +12,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainPlayer = document.getElementById('mainPlayer');
     const nextVideoBtn = document.getElementById('nextVideoBtn');
     const searchSection = document.getElementById('searchSection');
-    
 
-    hotVideosBtn.addEventListener('touchstart', () => {
+
+    hotVideosBtn.addEventListener('click', () => {
         videoPlayer.style.display = 'block';
         searchSection.style.display = 'none';
         loadHotVideos();
     });
 
-    movieSearchBtn.addEventListener('touchstart', () => {
+    movieSearchBtn.addEventListener('click', () => {
         videoPlayer.style.display = 'none';
         searchSection.style.display = 'block';
         handleMovieSearch(searchSection);
     });
 
-    nextVideoBtn.addEventListener('touchstart', playNextVideo);
+    nextVideoBtn.addEventListener('click', playNextVideo);
 
     // 初始加载热门视频
     loadHotVideos();
 
     async function loadHotVideos() {
         try {
-            const response = await fetch(`${HOT_VIDEOS_API}?num=10`);
+            const response = await fetch(`${HOT_VIDEOS_API}&num=10`);
             const data = await response.json();
             currentVideoList = data.itemList.filter(item => item.type === 'video').map(item => item.data);
             currentVideoIndex = 0;
@@ -50,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function playVideo(video) {
-        mainPlayer.src = `https://video.miyi23.top/.netlify/functions/proxy?url=${encodeURIComponent(video.playUrl)}`;
+        mainPlayer.src = video.playUrl;
         mainPlayer.play();
         document.getElementById('videoTitle').textContent = video.title;
         document.getElementById('videoDescription').textContent = video.description;
@@ -61,3 +59,4 @@ document.addEventListener('DOMContentLoaded', () => {
         playVideo(currentVideoList[currentVideoIndex]);
     }
 });
+    
