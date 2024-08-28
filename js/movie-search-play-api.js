@@ -1,4 +1,4 @@
-const API_URL = '/.netlify/functions/proxy?url=https://api.ffzyapi.com/api.php/provide/vod/?ac=detail';
+const API_BASE_URL = '/.netlify/functions/proxy?url=https://api.ffzyapi.com/api.php/provide/vod/';
 
 export async function handleMovieSearch(searchSection) {
     const searchInput = document.createElement('input');
@@ -26,8 +26,9 @@ export async function handleMovieSearch(searchSection) {
 
 async function searchMovies(searchTerm) {
     try {
-        // 确保查询参数被正确编码并传递
-        const response = await fetch(`${API_URL}&wd=${encodeURIComponent(searchTerm)}`);
+        // 动态构建完整的API URL，将查询参数正确附加到URL中
+        const url = `${API_BASE_URL}?ac=detail&wd=${encodeURIComponent(searchTerm)}`;
+        const response = await fetch(url);
         const data = await response.json();
         console.log('API Response:', data);
         return data.list || [];
