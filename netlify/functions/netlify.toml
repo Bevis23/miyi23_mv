@@ -1,2 +1,4 @@
 [build]
-  functions = "functions"
+  command = "npm run build"  # 或者 "yarn build", 依赖于你的构建命令
+  publish = "dist"  # 或者 "build", 依赖于你的构建输出目录
+  functions = "netlify/functions"
