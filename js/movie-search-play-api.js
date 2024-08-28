@@ -1,5 +1,7 @@
 // movie-search-play-api.js
 
+import Hls from 'https://cdn.jsdelivr.net/npm/hls.js@latest';
+
 const API_URL = 'https://api.ffzyapi.com/api.php/provide/vod/';
 
 export async function handleMovieSearch(searchSection) {
@@ -29,8 +31,11 @@ export async function handleMovieSearch(searchSection) {
 async function searchMovies(searchTerm) {
     try {
         const response = await fetch(`${API_URL}?ac=detail&wd=${encodeURIComponent(searchTerm)}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
-        console.log('API Response:', data); // 日志输出API响应
+        console.log('API Response:', data);
         return data.list || [];
     } catch (error) {
         console.error('Error fetching movies:', error);
@@ -40,12 +45,16 @@ async function searchMovies(searchTerm) {
 
 function displayResults(results, container) {
     container.innerHTML = '';
+    if (results.length === 0) {
+        container.innerHTML = '<p>没有找到相关影视，请尝试其他关键词。</p>';
+        return;
+    }
     results.forEach(movie => {
         const movieElement = document.createElement('div');
         movieElement.className = 'movie-item';
         movieElement.innerHTML = `
             <h3>${movie.vod_name}</h3>
-            <img src="${movie.vod_pic}" alt="${movie.vod_name}" style="width: 100px;">
+            <img src="${movie.vod_pic}" alt="${movie.vod_name}" style="width: 100px; height: auto;">
             <p>${movie.vod_remarks}</p>
         `;
         movieElement.addEventListener('click', () => showMovieDetails(movie));
@@ -58,7 +67,7 @@ function showMovieDetails(movie) {
     const detailsElement = document.createElement('div');
     detailsElement.innerHTML = `
         <h2>${movie.vod_name}</h2>
-        <img src="${movie.vod_pic}" alt="${movie.vod_name}" style="width: 200px;">
+        <img src="${movie.vod_pic}" alt="${movie.vod_name}" style="width: 200px; height: auto;">
         <p>${movie.vod_content}</p>
         <h3>播放列表</h3>
     `;
@@ -88,8 +97,9 @@ function showMovieDetails(movie) {
     document.getElementById('mainContent').innerHTML = '';
     document.getElementById('mainContent').appendChild(detailsElement);
 }
+
 function playVideo(url) {
-    console.log('Attempting to play URL:', url); // 日志输出尝试播放的URL
+    console.log('Attempting to play URL:', url);
 
     let videoPlayer = document.getElementById('videoPlayer');
     if (!videoPlayer) {
@@ -105,40 +115,60 @@ function playVideo(url) {
         mainPlayer.id = 'mainPlayer';
         mainPlayer.controls = true;
         mainPlayer.style.width = '100%';
+        mainPlayer.style.maxWidth = '640px';
         videoPlayer.appendChild(mainPlayer);
     }
 
-    // 检查URL是否是有效的
     if (!url || typeof url !== 'string') {
         console.error('Invalid video URL:', url);
+        videoPlayer.innerHTML = '<p>无效的视频地址。</p>';
         return;
     }
 
-    // 尝试直接播放
-    mainPlayer.src = url;
-    mainPlayer.play().catch(e => {
-        console.error('Error playing video:', e);
-
-        // 如果直接播放失败，尝试使用 iframe
-        const iframe = document.createElement('iframe');
-        iframe.src = url;
-        iframe.width = '100%';
-        iframe.height = '400px';
-        iframe.allowFullscreen = true;
-
-        videoPlayer.innerHTML = '';
-        videoPlayer.appendChild(iframe);
-    });
+    if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(mainPlayer);
+        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+            mainPlayer.play().catch(e => {
+                console.error('Autoplay failed:', e);
+                showPlayButton(mainPlayer);
+            });
+        });
+    } else if (mainPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+        mainPlayer.src = url;
+        mainPlayer.addEventListener('loadedmetadata', function() {
+            mainPlayer.play().catch(e => {
+                console.error('Autoplay failed:', e);
+                showPlayButton(mainPlayer);
+            });
+        });
+    } else {
+        console.error('This browser does not support HLS');
+        videoPlayer.innerHTML = '<p>您的浏览器不支持播放此视频。请尝试使用其他浏览器。</p>';
+    }
 }
 
-// 创建视频播放器
+function showPlayButton(player) {
+    const playButton = document.createElement('button');
+    playButton.textContent = '播放视频';
+    playButton.style.position = 'absolute';
+    playButton.style.top = '50%';
+    playButton.style.left = '50%';
+    playButton.style.transform = 'translate(-50%, -50%)';
+    playButton.addEventListener('click', () => {
+        player.play();
+        playButton.remove();
+    });
+    player.parentNode.insertBefore(playButton, player.nextSibling);
+}
+
 function createVideoPlayer() {
     const videoPlayer = document.createElement('div');
     videoPlayer.id = 'videoPlayer';
     videoPlayer.style.display = 'none';
-
+    videoPlayer.style.position = 'relative';
     document.getElementById('mainContent').appendChild(videoPlayer);
 }
 
-// 在模块初始化时创建视频播放器
 createVideoPlayer();
