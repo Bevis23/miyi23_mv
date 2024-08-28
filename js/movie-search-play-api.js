@@ -4,12 +4,9 @@ export async function handleMovieSearch(searchSection) {
     const searchInput = document.createElement('input');
     searchInput.type = 'text';
     searchInput.placeholder = '输入影视名称';
-
     const searchButton = document.createElement('button');
     searchButton.textContent = '搜索';
-
     const resultsContainer = document.createElement('div');
-
     searchSection.innerHTML = '';
     searchSection.appendChild(searchInput);
     searchSection.appendChild(searchButton);
@@ -26,18 +23,18 @@ export async function handleMovieSearch(searchSection) {
 
 async function searchMovies(searchTerm) {
     try {
-        // 动态构建完整的API URL，将查询参数正确附加到URL中
+        // 构建完整的URL
         const url = `${API_BASE_URL}?ac=detail&wd=${encodeURIComponent(searchTerm)}`;
+        console.log('Request URL:', url); // 输出请求URL
         const response = await fetch(url);
         const data = await response.json();
-        console.log('API Response:', data);
+        console.log('API Response:', data); // 输出API响应
         return data.list || [];
     } catch (error) {
         console.error('Error fetching movies:', error);
         return [];
     }
 }
-
 function displayResults(results, container) {
     container.innerHTML = '';
     results.forEach(movie => {
