@@ -1,12 +1,17 @@
-const API_BASE_URL = '/.netlify/functions/proxy?url=https://api.ffzyapi.com/api.php/provide/vod/';
+// movie-search-play-api.js
+
+const API_URL = 'https://api.ffzyapi.com/api.php/provide/vod/';
 
 export async function handleMovieSearch(searchSection) {
     const searchInput = document.createElement('input');
     searchInput.type = 'text';
     searchInput.placeholder = '输入影视名称';
+
     const searchButton = document.createElement('button');
     searchButton.textContent = '搜索';
+
     const resultsContainer = document.createElement('div');
+
     searchSection.innerHTML = '';
     searchSection.appendChild(searchInput);
     searchSection.appendChild(searchButton);
@@ -23,18 +28,16 @@ export async function handleMovieSearch(searchSection) {
 
 async function searchMovies(searchTerm) {
     try {
-        // 构建完整的URL
-        const url = `${API_BASE_URL}?ac=detail&wd=${encodeURIComponent(searchTerm)}`;
-        console.log('Request URL:', url); // 输出请求URL
-        const response = await fetch(url);
+        const response = await fetch(`${API_URL}?ac=detail&wd=${encodeURIComponent(searchTerm)}`);
         const data = await response.json();
-        console.log('API Response:', data); // 输出API响应
+        console.log('API Response:', data); // 日志输出API响应
         return data.list || [];
     } catch (error) {
         console.error('Error fetching movies:', error);
         return [];
     }
 }
+
 function displayResults(results, container) {
     container.innerHTML = '';
     results.forEach(movie => {
@@ -85,7 +88,6 @@ function showMovieDetails(movie) {
     document.getElementById('mainContent').innerHTML = '';
     document.getElementById('mainContent').appendChild(detailsElement);
 }
-
 function playVideo(url) {
     console.log('Attempting to play URL:', url); // 日志输出尝试播放的URL
 
@@ -134,9 +136,6 @@ function createVideoPlayer() {
     const videoPlayer = document.createElement('div');
     videoPlayer.id = 'videoPlayer';
     videoPlayer.style.display = 'none';
-    videoPlayer.style.width = '100%';
-    videoPlayer.style.maxWidth = '800px';
-    videoPlayer.style.margin = '0 auto';
 
     document.getElementById('mainContent').appendChild(videoPlayer);
 }
