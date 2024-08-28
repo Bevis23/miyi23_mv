@@ -28,15 +28,16 @@ export async function handleMovieSearch(searchSection) {
 
 async function searchMovies(searchTerm) {
     try {
-        const response = await fetch(`${API_URL}&ac=detail&wd=${encodeURIComponent(searchTerm)}`);
+        const response = await fetch(`${API_URL}?ac=detail&wd=${encodeURIComponent(searchTerm)}`);
         const data = await response.json();
-        console.log('API Response:', data);
+        console.log('API Response:', data); // 日志输出API响应
         return data.list || [];
     } catch (error) {
         console.error('Error fetching movies:', error);
         return [];
     }
 }
+
 function displayResults(results, container) {
     container.innerHTML = '';
     results.forEach(movie => {
@@ -135,9 +136,6 @@ function createVideoPlayer() {
     const videoPlayer = document.createElement('div');
     videoPlayer.id = 'videoPlayer';
     videoPlayer.style.display = 'none';
-    videoPlayer.style.width = '100%';
-    videoPlayer.style.maxWidth = '800px';
-    videoPlayer.style.margin = '0 auto';
 
     document.getElementById('mainContent').appendChild(videoPlayer);
 }
