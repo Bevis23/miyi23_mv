@@ -11,11 +11,17 @@ exports.handler = async function (event) {
     }
 
     try {
-        const response = await axios.get(url, {
+        // Decode the URL before passing it to axios
+        const decodedUrl = decodeURIComponent(url);
+        console.log('Proxying request to:', decodedUrl); // 日志输出解码后的URL
+
+        const response = await axios.get(decodedUrl, {
             headers: {
-                // 可以添加更多头部信息
+                'Cache-Control': 'no-cache', // 禁用缓存
             }
         });
+
+        console.log('Received response:', response.data); // 日志输出响应内容
 
         return {
             statusCode: 200,
