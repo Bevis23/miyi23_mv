@@ -1,6 +1,6 @@
 // movie-search-play-api.js
 
-const API_URL = 'https://api.ffzyapi.com/api.php/provide/vod/';
+const API_URL = 'https://video.miyi23.top//.netlify/functions/proxy?url=https://api.ffzyapi.com/api.php/provide/vod/';
 
 export async function handleMovieSearch(searchSection) {
     const searchInput = document.createElement('input');
@@ -28,16 +28,15 @@ export async function handleMovieSearch(searchSection) {
 
 async function searchMovies(searchTerm) {
     try {
-        const response = await fetch(`${API_URL}?ac=detail&wd=${encodeURIComponent(searchTerm)}`);
+        const response = await fetch(`${API_URL}&ac=detail&wd=${encodeURIComponent(searchTerm)}`);
         const data = await response.json();
-        console.log('API Response:', data); // 日志输出API响应
+        console.log('API Response:', data);
         return data.list || [];
     } catch (error) {
         console.error('Error fetching movies:', error);
         return [];
     }
 }
-
 function displayResults(results, container) {
     container.innerHTML = '';
     results.forEach(movie => {

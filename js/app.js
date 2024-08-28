@@ -2,7 +2,7 @@
 
 import { handleMovieSearch } from './movie-search-play-api.js';
 
-const HOT_VIDEOS_API = 'https://baobab.kaiyanapp.com/api/v4/discovery/hot';
+const HOT_VIDEOS_API = 'https://video.miyi23.top/.netlify/functions/proxy?url=https://baobab.kaiyanapp.com/api/v4/discovery/hot';
 
 let currentVideoList = [];
 let currentVideoIndex = 0;
@@ -16,19 +16,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchSection = document.getElementById('searchSection');
     
 
-    hotVideosBtn.addEventListener('click', () => {
+    hotVideosBtn.addEventListener('touchstart', () => {
         videoPlayer.style.display = 'block';
         searchSection.style.display = 'none';
         loadHotVideos();
     });
 
-    movieSearchBtn.addEventListener('click', () => {
+    movieSearchBtn.addEventListener('touchstart', () => {
         videoPlayer.style.display = 'none';
         searchSection.style.display = 'block';
         handleMovieSearch(searchSection);
     });
 
-    nextVideoBtn.addEventListener('click', playNextVideo);
+    nextVideoBtn.addEventListener('touchstart', playNextVideo);
 
     // 初始加载热门视频
     loadHotVideos();
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function playVideo(video) {
-        mainPlayer.src = video.playUrl;
+        mainPlayer.src = `https://video.miyi23.top/.netlify/functions/proxy?url=${encodeURIComponent(video.playUrl)}`;
         mainPlayer.play();
         document.getElementById('videoTitle').textContent = video.title;
         document.getElementById('videoDescription').textContent = video.description;
